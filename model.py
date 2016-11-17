@@ -1,28 +1,66 @@
 class User:
     def __init__(self):
-        self.userID = 0
-        self.balance = 0
+        self.userID = 0 #Integer key for database
+        self.balance = 0 #Float/real (only two decimal places allowed) for amount of money
         self.PnL = 0 #float/real total profit, negative value indicates loss 
-        self.portfolio = Portfolio()
+        self.portfolio = Portfolio() #Portfolio object to manage transactions and owned stock
 
     def buy(self, stockID, quantity):
+        '''
+        Returns boolean success/fail
+        
+        input:
+        stockID - int database key
+        quantity - int number to buy
+        '''
         pass
 
     def sell(self, stockID, quantity):
+        '''
+        Returns boolean success/fail
+        
+        input:
+        stockID - int database key
+        quantity - int number to sell
+        '''
         pass
 
     def addFunds(self, amount):
+        '''
+        returns boolean success/fail
+        
+        input:
+        amount - float/real amount to add to balance
+        '''
+        pass
+    
+    def getBalance(self):
+        '''
+        returns float/real current balance
+        '''
         pass
 
 class Portfolio:
     def __init__(self):
-        self.transactions = []
-        self.ownedStock = [] #INTENTIONALLY VIOLATES M1 CLASS DIAGRAM-must revise
+        self.transactions = [] #List of transaction objects for history
+        self.ownedStock = [] #List of stocks currently owned. INTENTIONALLY VIOLATES M1 CLASS DIAGRAM-must revise
 
     def addStock(self, stockID):
+        '''
+        returns boolean success/fail
+        
+        input:
+        stockID - int database key
+        '''
         pass
 
     def removeStock(self, stockID):
+        '''
+        returns boolean success/fail
+        
+        input:
+        stockID - int database key
+        '''
         pass
 
 class Transaction:
@@ -37,22 +75,36 @@ class Stock:
         pass
 
     def getCurrentPrice(self):
-        #Will return the current market value of the stock
+        '''
+        returns float/real current price of the stock
+        '''
         pass
 
 class Company:
-    def __init__(self):
+    def __init__(self, name, finGrade, currentRev, profit):
         pass
 
     def getName(self):
+        '''
+        returns string name
+        '''
         pass
 
     def getFinGrade(self):
+        '''
+        returns char ('A', 'B', etc) financial grade for company
+        '''
         pass
 
     def getCurrentRev(self):
+        '''
+        returns float/real current revenue of the company
+        '''
         pass
 
     def getProfit(self):
+        '''
+        returns float/real current profit of the company
+        '''
         pass
     
