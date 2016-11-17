@@ -65,10 +65,10 @@ class Portfolio:
 
 class Transaction:
     def __init__(self, stockID, price, time, quantity = 1):
-        self.stock = Stock(stockID)
-        self.price = price
-        self.time = time
-        self.quantity = quantity
+        self.stock = Stock(stockID) #Stock object the transaction references
+        self.price = price #Float/real price per stock that the transaction executed with
+        self.time = time #Timestamp of when the transaction occured
+        self.quantity = quantity #The amount of stock bought or sold
 
 class Stock:
     def __init__(self, stockID = 0):
