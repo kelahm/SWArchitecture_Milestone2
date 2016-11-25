@@ -1,0 +1,30 @@
+{% load static %}
+<head>
+	<script src="jquery-3.1.1.min.js"></script>
+	<meta name="google-signin-client_id" content="427104067013-l2kc1tkhgmc8ghtgmkkvf4494teqiq3q.apps.googleusercontent.com">
+	<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+	<script src="{% static 'TradeNet/OAuth.js' %}"></script>
+</head>
+
+<body>
+{% if 'member_name' not in request.session %}
+	{% if request.session.login_error %}
+		<p>{{request.session.login_error}}</p>
+	{% endif %}
+	<form action="{% url 'TradeNet:index' %}" method="post">
+		{% csrf_token %}
+		username:<br>
+		<input type="text" name="username">
+		<br>
+		password:<br>
+		<input type="password" name="password">
+		<br><br>
+	<input type="submit" value="login" />
+	</form>
+	<div class="g-signin2" data-onsuccess="onSignIn"></div>
+	<a href="{% url 'TradeNet:create_user' %}">Create account</a>
+{% else %}
+	<p>You Are Logged in!</p>
+	<a href="#" onclick="signOut();">log out</a>
+{% endif %}
+</body>

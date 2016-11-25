@@ -1,0 +1,44 @@
+{% load static %}
+<head>
+	<script src="jquery-3.1.1.min.js"></script>
+	<meta name="google-signin-client_id" content="427104067013-l2kc1tkhgmc8ghtgmkkvf4494teqiq3q.apps.googleusercontent.com">
+	<script src='https://www.google.com/recaptcha/api.js'></script>
+	<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+	<script src="{% static 'TradeNet/OAuth.js' %}"></script>
+</head>
+
+<body>
+{% if 'member_name' not in request.session %}
+	{% if request.session.create_user_error %}
+		<p>{{request.session.create_user_error}}</p>
+	{% endif %}
+	<form action="{% url 'TradeNet:create_user' %}" method="post">
+		{% csrf_token %}
+		username:<br>
+		<input type="text" name="username">
+		<br>
+		first name:<br>
+		<input type="text" name="first_name">
+		<br>
+		last name:<br>
+		<input type="text" name="last_name">
+		<br>
+		password:<br>
+		<input type="password" name="password">
+		<br>
+		confirm password:<br>
+		<input type="password" name="password2">
+		<br>
+		email:<br>
+		<input type="email" name="email">
+		<br><br>
+		<div class="g-recaptcha" data-sitekey="6LeW2wsUAAAAAIHedLq8cxaCGjuNiaPxAqU36NIS"></div>
+		<br><br>
+	<input type="submit" value="create" />
+	</form>
+	<div class="g-signin2" data-onsuccess="onSignIn"></div>
+{% else %}
+	<p>Successfully created user!</p>
+	<a href="#" onclick="signOut();">log out</a>
+{% endif %}
+</body>
