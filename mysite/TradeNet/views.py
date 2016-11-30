@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from django.contrib.auth.models import User
-import ReCaptcha
+from ReCaptcha import *
 from oauth2client import client, crypt
 
 reCaptcha = ReCaptcha.ReCaptcha()
