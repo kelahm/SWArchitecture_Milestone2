@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from ReCaptcha import *
 from oauth2client import client, crypt
 
-reCaptcha = ReCaptcha.ReCaptcha()
+reCaptcha = ReCaptcha()
 CLIENT_ID = '427104067013-l2kc1tkhgmc8ghtgmkkvf4494teqiq3q.apps.googleusercontent.com'
 APPS_DOMAIN_NAME = 'http://localhost:8000/TradeNet/'
 
