@@ -9,7 +9,7 @@ function onSignIn(googleUser) {
 	var csrftoken = getCookie('csrftoken');
 	id_token = googleUser.getAuthResponse().id_token;
 	var xhr = new XMLHttpRequest();
-	xhr.open('POST', 'http://localhost:8000/twitter/tokensignin');
+	xhr.open('POST', 'http://localhost:8000/TradeNet/tokensignin');
 	xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xhr.setRequestHeader("X-CSRFToken", csrftoken);
 	xhr.onload = function() {
