@@ -3,8 +3,6 @@ import json
 
 
 class MailboxLayer():
-    def __init__(self):
-
     def verifyEmail(self, email):
         api_key = '71becf10dd7d760ac81920b2103336d0'
         url = 'https://apilayer.net/api/check?access_key=' + api_key    #Build Request URL

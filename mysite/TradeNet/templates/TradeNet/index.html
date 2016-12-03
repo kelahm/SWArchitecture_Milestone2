@@ -24,7 +24,19 @@
 	<div class="g-signin2" data-onsuccess="onSignIn"></div>
 	<a href="{% url 'TradeNet:create_user' %}">Create account</a>
 {% else %}
-	<p>You Are Logged in!</p>
+	<p>{{request.session.member_name}} is logged in</p>
+	
+	<a href="{% url 'TradeNet:index' %}">Home page</a>
+	<a href="{% url 'TradeNet:portfolio' %}">Portfolio</a>
 	<a href="#" onclick="signOut();">log out</a>
+	<br>
+	<br>
+	<p>News:</p>
+	{% for each in articles.articles %}
+		<img src='{{each.urlToImage}}' height='100' width='200'/>
+		<a href="{{each.url}}">{{each.author}}: {{each.title}}</a>
+		<br>
+		<br>
+	{% endfor %}
 {% endif %}
 </body>

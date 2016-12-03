@@ -6,6 +6,6 @@ from .models import *
 admin.site.register(Company)
 admin.site.register(Stock)
 admin.site.register(Transaction)
-admin.site.register(User)
+admin.site.register(UserBalance)
 admin.site.register(OwnedStock)
 admin.site.register(History)

@@ -1,0 +1,38 @@
+{% load static %}
+<head>
+	<script src="jquery-3.1.1.min.js"></script>
+	<meta name="google-signin-client_id" content="427104067013-l2kc1tkhgmc8ghtgmkkvf4494teqiq3q.apps.googleusercontent.com">
+	<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+	<script src="{% static 'TradeNet/OAuth.js' %}"></script>
+</head>
+
+<body>
+{% if 'member_name' not in request.session %}
+	<p>You are not loged in. Go to the home page to login</p>
+	<a href="{% url 'TradeNet:index' %}">Home page</a>
+{% else %}
+	<p>{{request.session.member_name}}'s Portfolio</p>
+	<a href="{% url 'TradeNet:index' %}">Home page</a>
+	<a href="#" onclick="signOut();">log out</a>
+	<br>
+	<br>
+	<p>Money in your account: ${{user_balance.balance}}</p>
+	<p>How much you've made so far: ${{user_balance.profit}}</p>
+	<a href="{% url 'TradeNet:index' %}">Add Funds</a>
+	<a href="{% url 'TradeNet:index' %}">Withdrawl Funds</a>
+	<br>
+	<br>
+	<p>Stocks owned:</p>
+	{%if stocks %}
+		{% for each in stocks %}
+			<p>{{each.quantity}} of {{each.stock.company}} stock bought at ${{each.transaction.price}} each  </p>
+			<a href="{% url 'TradeNet:index' %}">Sell</a>
+			<br>
+		{% endfor %}
+	{%else%}
+		<p>You own no stocks</p>
+	{% endif %}
+	<br>
+	<a href="{% url 'TradeNet:index' %}">Transaction History</a>
+{% endif %}
+</body>

@@ -39,6 +39,8 @@
 	<div class="g-signin2" data-onsuccess="onSignIn"></div>
 {% else %}
 	<p>Successfully created user!</p>
+	
+	<a href="{% url 'TradeNet:index' %}">Home page</a>
 	<a href="#" onclick="signOut();">log out</a>
 {% endif %}
 </body>

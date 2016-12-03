@@ -29,16 +29,19 @@ class Transaction(models.Model):
     price = models.FloatField(default=0)
     time = models.DateTimeField('time of transaction')
     quantity = models.IntegerField(default=1)
+    buy = models.BooleanField(default=True)
 
-class User(models.Model):
-    name = models.CharField(max_length=200)
+class UserBalance(models.Model):
+    email = models.CharField(max_length=200)
     balance = models.FloatField(default=0.00)
     profit = models.FloatField(default=0.00)
 
 class OwnedStock(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(UserBalance, on_delete=models.CASCADE)
     stock = models.ForeignKey(Stock, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
 
 class History(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(UserBalance, on_delete=models.CASCADE)
     transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)

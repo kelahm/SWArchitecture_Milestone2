@@ -4,16 +4,26 @@ from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from django.contrib.auth.models import User
+from TradeNet.models import History, UserBalance, Stock, Company, Transaction, OwnedStock
 from ReCaptcha import *
+from mailboxLayer import *
+from newsAPI import *
 from oauth2client import client, crypt
 
 reCaptcha = ReCaptcha()
+mailboxLayer = MailboxLayer()
+news = NewsApi()
 CLIENT_ID = '427104067013-l2kc1tkhgmc8ghtgmkkvf4494teqiq3q.apps.googleusercontent.com'
 APPS_DOMAIN_NAME = 'http://localhost:8000/TradeNet/'
 
 class IndexView(generic.TemplateView):
 	template_name = 'TradeNet/index.html'
 	
+	def get_context_data(self, **kwargs):
+		context = super(IndexView, self).get_context_data(**kwargs)
+		context['articles'] = news.getNews()
+		return context
+
 	def post(self, request, *args, **kwargs):
 		m = User.objects.filter(username=request.POST['username'])
 		if not m.exists():
@@ -32,15 +42,29 @@ class CreateUserView(generic.TemplateView):
 	template_name = 'TradeNet/create_user.html'
 	
 	def post(self, request, *args, **kwargs):
+		m = User.objects.filter(username=request.POST['username'])
+		n = User.objects.filter(email=request.POST['email'])
 		if request.POST['password'] != request.POST['password2']:
 			request.session['create_user_error'] = "Passwords do not match. Try again."
 			return render(request, self.template_name)
+		if not mailboxLayer.verifyEmail(request.POST['email']):
+			request.session['create_user_error'] = "Email is not valid. Try again."
+			return render(request, self.template_name)
+		if m.exists():
+			request.session['create_user_error'] = "Username taken. Try again."
+			return render(request, self.template_name)
+		if n.exists():
+			request.session['create_user_error'] = "Email is already registered. Do you already have an acount?"
+			return render(request, self.template_name)
 		if reCaptcha.verify(request.POST['g-recaptcha-response']):
 			new_user = User.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'])
+			user_balance = UserBalance(email=request.POST['email'])
 			new_user.last_name = request.POST['last_name']
 			new_user.first_name = request.POST['first_name']
 			new_user.save()
+			user_balance.save()
 			request.session['member_name'] = new_user.first_name
+			request.session['member_email'] = new_user.email
 			
 			if 'create_user_error' in request.session:
 				del request.session['create_user_error']
@@ -48,9 +72,27 @@ class CreateUserView(generic.TemplateView):
 		else:
 			request.session['create_user_error'] = "ReCaptcha failed. Try again."
 			return render(request, self.template_name)
-		
+
+class PortfolioView(generic.TemplateView):
+	template_name = 'TradeNet/portfolio.html'
+	
+	def get_context_data(self, **kwargs):
+		context = super(PortfolioView, self).get_context_data(**kwargs)
+		user = UserBalance.objects.get(email=self.request.session['member_email'])
+		context['user_balance'] = user
+		shares = OwnedStock.objects.filter(user__email=self.request.session['member_email'])
+		if shares.exists():
+			context['stocks'] = shares
+		else:
+			context['stocks'] = None
+		return context
+
+	def post(self, request, *args, **kwargs):
+		return render(request, self.template_name)
+			
 def logout(request):
 	del request.session['member_name']
+	del request.session['member_email']
 	return HttpResponseRedirect(reverse('TradeNet:index'))
 	
 def tokensignin(request):
