@@ -11,32 +11,18 @@
 	<p>You are not loged in. Go to the home page to login</p>
 	<a href="{% url 'TradeNet:index' %}">Home page</a>
 {% else %}
-	{%if message %}
-		<p>{{message}}</p>
-		<br>
-	{% endif %}
 	<p>{{request.session.member_name}}'s Portfolio</p>
 	<a href="{% url 'TradeNet:index' %}">Home page</a>
 	<a href="#" onclick="signOut();">log out</a>
 	<br>
 	<br>
-	<p>Money in your account: ${{user_balance.balance}}</p>
-	<p>How much you've made so far: ${{user_balance.profit}}</p>
-	<a href="{% url 'TradeNet:add_funds' %}">Add Funds</a>
-	<a href="{% url 'TradeNet:withdrawal_funds' %}">Withdrawal Funds</a>
-	<br>
-	<br>
-	<p>Stocks owned:</p>
-	{%if stocks %}
-		{% for each in stocks %}
-			<p>{{each.quantity}} of {{each.stock.company}} stock bought at ${{each.transaction.price}} each  </p>
-			<a href="{% url 'TradeNet:index' %}">Sell</a>
-			<br>
-		{% endfor %}
-	{%else%}
-		<p>You own no stocks</p>
-	{% endif %}
-	<br>
-	<a href="{% url 'TradeNet:transaction_history' %}">Transaction History</a>
+	<p>enter how much money you want to add to your account:</p>
+	<form action="{% url 'TradeNet:portfolio' %}" method="post">
+		{% csrf_token %}
+		<input type="text" name="funds">
+		<input type='hidden' value='add' name='update'>
+		<br>
+		<input type="submit" value="Add" />
+	</form>
 {% endif %}
 </body>

@@ -20,23 +20,21 @@
 	<a href="#" onclick="signOut();">log out</a>
 	<br>
 	<br>
-	<p>Money in your account: ${{user_balance.balance}}</p>
-	<p>How much you've made so far: ${{user_balance.profit}}</p>
-	<a href="{% url 'TradeNet:add_funds' %}">Add Funds</a>
-	<a href="{% url 'TradeNet:withdrawal_funds' %}">Withdrawal Funds</a>
-	<br>
-	<br>
-	<p>Stocks owned:</p>
-	{%if stocks %}
-		{% for each in stocks %}
-			<p>{{each.quantity}} of {{each.stock.company}} stock bought at ${{each.transaction.price}} each  </p>
-			<a href="{% url 'TradeNet:index' %}">Sell</a>
-			<br>
+	<p>Transactions:</p>
+	{%if transactions %}
+		{% for each in transactions %}
+			{%if each.buy %}
+				<p>BOUGHT: {{each.quantity}} shares of {{each.stock.company}} stock for ${{each.price}} each</p>
+				<br>
+			{%else%}
+				<p>SOLD: {{each.quantity}} shares of {{each.stock.company}} stock for ${{each.price}} each</p>
+				<br>
+			{% endif %}
 		{% endfor %}
 	{%else%}
-		<p>You own no stocks</p>
+		<p>You have not traded any stocks</p>
 	{% endif %}
 	<br>
-	<a href="{% url 'TradeNet:transaction_history' %}">Transaction History</a>
+	<a href="{% url 'TradeNet:portfolio' %}">Portfolio</a>
 {% endif %}
 </body>

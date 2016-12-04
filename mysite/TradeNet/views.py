@@ -88,7 +88,36 @@ class PortfolioView(generic.TemplateView):
 		return context
 
 	def post(self, request, *args, **kwargs):
-		return render(request, self.template_name)
+		user = UserBalance.objects.get(email=self.request.session['member_email'])
+		if request.POST['update'] == "add":
+			user.balance += float(request.POST['funds'])
+			user.save()
+			context = self.get_context_data(**kwargs)
+			context['message'] = "Funds have been added"
+		else:
+			user.balance -= float(request.POST['funds'])
+			user.save()
+			context = self.get_context_data(**kwargs)
+			context['message'] = "Funds have been removed"
+		return render(request, self.template_name, context)
+		
+class AddFundsView(generic.TemplateView):
+	template_name = 'TradeNet/addfunds.html'
+
+class WithdrawalFundsView(generic.TemplateView):
+	template_name = 'TradeNet/withdrawalfunds.html'
+	
+class TransactionHistoryView(generic.TemplateView):
+	template_name = 'TradeNet/transactionhistory.html'
+	
+	def get_context_data(self, **kwargs):
+		context = super(TransactionHistoryView, self).get_context_data(**kwargs)
+		transactions = History.objects.filter(user__email=self.request.session['member_email'])
+		if transactions.exists():
+			context['transactions'] = transactions
+		else:
+			context['transactions'] = None
+		return context
 			
 def logout(request):
 	del request.session['member_name']
