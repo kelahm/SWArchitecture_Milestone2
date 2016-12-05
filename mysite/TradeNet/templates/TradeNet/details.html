@@ -8,36 +8,34 @@
 
 <body>
 {% if 'member_name' not in request.session %}
-	{% if request.session.login_error %}
-		<p>{{request.session.login_error}}</p>
-	{% endif %}
-	<form action="{% url 'TradeNet:index' %}" method="post">
-		{% csrf_token %}
-		username:<br>
-		<input type="text" name="username">
-		<br>
-		password:<br>
-		<input type="password" name="password">
-		<br><br>
-	<input type="submit" value="login" />
-	</form>
-	<div class="g-signin2" data-onsuccess="onSignIn"></div>
-	<a href="{% url 'TradeNet:create_user' %}">Create account</a>
+	<p>You are not loged in. Go to the home page to login</p>
+	<a href="{% url 'TradeNet:index' %}">Home page</a>
 {% else %}
+	{%if message %}
+		<p>{{message}}</p>
+		<br>
+	{% endif %}
 	<p>{{request.session.member_name}} is logged in</p>
-	
 	<a href="{% url 'TradeNet:index' %}">Home page</a>
 	<a href="{% url 'TradeNet:portfolio' %}">Portfolio</a>
 	<a href="{% url 'TradeNet:stocks' %}">Search Stocks</a>
 	<a href="#" onclick="signOut();">log out</a>
 	<br>
 	<br>
-	<p>News:</p>
-	{% for each in articles.articles %}
-		<img src='{{each.urlToImage}}' height='100' width='200'/>
-		<a href="{{each.url}}">{{each.author}}: {{each.title}}</a>
-		<br>
-		<br>
-	{% endfor %}
+	<p>{{quote_results.quotes.quote.symbol}} stock page</p>
+	<br>
+	<p>{{quote_results.quotes.quote.description}}</p>
+	<br>
+	<p>stock price: ${{quote_results.quotes.quote.last}}</p>
+	<br>
+	<p>today's high: ${{quote_results.quotes.quote.high}}</p>
+	<br>
+	<p>today's low: ${{quote_results.quotes.quote.low}}</p>
+	<br>
+	<p>today's opening price: ${{quote_results.quotes.quote.open}}</p>
+	<br>
+	<p>52 week high: ${{quote_results.quotes.quote.week_52_high}}</p>
+	<br>
+	<p>52 week low: ${{quote_results.quotes.quote.week_52_low}}</p>
 {% endif %}
 </body>

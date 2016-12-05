@@ -1,0 +1,56 @@
+{% load static %}
+<head>
+	<script src="jquery-3.1.1.min.js"></script>
+	<meta name="google-signin-client_id" content="427104067013-l2kc1tkhgmc8ghtgmkkvf4494teqiq3q.apps.googleusercontent.com">
+	<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+	<script src="{% static 'TradeNet/OAuth.js' %}"></script>
+</head>
+
+<body>
+{% if 'member_name' not in request.session %}
+	<p>You are not loged in. Go to the home page to login</p>
+	<a href="{% url 'TradeNet:index' %}">Home page</a>
+{% else %}
+	{%if message %}
+		<p>{{message}}</p>
+		<br>
+	{% endif %}
+	<p>{{request.session.member_name}} is logged in</p>
+	<a href="{% url 'TradeNet:index' %}">Home page</a>
+	<a href="{% url 'TradeNet:portfolio' %}">Portfolio</a>
+	<a href="{% url 'TradeNet:stocks' %}">Search Stocks</a>
+	<a href="#" onclick="signOut();">log out</a>
+	<br>
+	<br>
+	{% if search_results %}
+		<p>Search for stocks:</p>
+		<form action="{% url 'TradeNet:stocks' %}" method="post">
+			{% csrf_token %}
+			<input type="text" name="term">
+			<br>
+			<input type="submit" value="Search" />
+		</form>
+		
+		<p>Search results:</p>
+		{% if search_results.securities == None %}
+			<p>No stocks were found</p>
+		{% endif %}
+		{% if size == 1 %}
+			<a href="{% url 'TradeNet:details' search_results.securities.security.symbol %}">symbol:{{search_results.securities.security.symbol}} type:{{search_results.securities.security.type}} description:{{search_results.securities.security.description}}</a>
+		{% else %}
+			{% for each in search_results.securities.security %}
+				<a href="{% url 'TradeNet:details' each.symbol %}">symbol: {{each.symbol}} type:{{each.type}} description:{{each.description}}</a>
+				<br>
+			{% endfor %}
+		{% endif %}
+	{%else%}
+		<p>Search for stocks:</p>
+		<form action="{% url 'TradeNet:stocks' %}" method="post">
+			{% csrf_token %}
+			<input type="text" name="term">
+			<br>
+			<input type="submit" value="Search" />
+		</form>
+	{% endif %}
+{% endif %}
+</body>

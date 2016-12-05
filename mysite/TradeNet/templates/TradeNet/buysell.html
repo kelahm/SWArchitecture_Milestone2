@@ -1,0 +1,48 @@
+{% load static %}
+<head>
+	<script src="jquery-3.1.1.min.js"></script>
+	<meta name="google-signin-client_id" content="427104067013-l2kc1tkhgmc8ghtgmkkvf4494teqiq3q.apps.googleusercontent.com">
+	<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+	<script src="{% static 'TradeNet/OAuth.js' %}"></script>
+</head>
+
+<body>
+{% if 'member_name' not in request.session %}
+	<p>You are not loged in. Go to the home page to login</p>
+	<a href="{% url 'TradeNet:index' %}">Home page</a>
+{% else %}
+	{%if message %}
+		<p>{{message}}</p>
+		<br>
+	{% endif %}
+	<p>{{request.session.member_name}}'s Portfolio</p>
+	<a href="{% url 'TradeNet:index' %}">Home page</a>
+	<a href="{% url 'TradeNet:portfolio' %}">Portfolio</a>
+	<a href="#" onclick="signOut();">log out</a>
+	<br>
+	<br>
+	<p>Transactions:</p>
+	{%if buy %}
+		<p>Enter how many {{stock.company}} stocks you want to buy:</p>
+		<form action="{% url 'TradeNet:buy_sell' %}" method="post">
+			{% csrf_token %}
+			<input type="number" min="1" name="count">
+			<input type='hidden' value='buy' name='update'>
+			<br>
+			<input type="submit" value="Buy" />
+		</form>
+	{%else%}
+		<p>You have {{count}} shares of {{stock.company}} stock</p>
+		<p>Enter how many {{stock.company}} stocks you want to sell:</p>
+		<form action="{% url 'TradeNet:buy_sell' %}" method="post">
+			{% csrf_token %}
+			<input type="number" min="1" name="count">
+			<input type='hidden' value='sell' name='update'>
+			<br>
+			<input type="submit" value="Sell" />
+		</form>
+	{% endif %}
+	<br>
+	<a href="{% url 'TradeNet:portfolio' %}">Portfolio</a>
+{% endif %}
+</body>

@@ -8,11 +8,13 @@ from TradeNet.models import History, UserBalance, Stock, Company, Transaction, O
 from ReCaptcha import *
 from mailboxLayer import *
 from newsAPI import *
+from TradierAPI import *
 from oauth2client import client, crypt
 
 reCaptcha = ReCaptcha()
 mailboxLayer = MailboxLayer()
 news = NewsApi()
+trade = TradierAPI()
 CLIENT_ID = '427104067013-l2kc1tkhgmc8ghtgmkkvf4494teqiq3q.apps.googleusercontent.com'
 APPS_DOMAIN_NAME = 'http://localhost:8000/TradeNet/'
 
@@ -119,6 +121,70 @@ class TransactionHistoryView(generic.TemplateView):
 			context['transactions'] = None
 		return context
 			
+class BuySellView(generic.TemplateView):
+	#NEEDS WORK!!!!
+	template_name = 'TradeNet/buysell.html'
+	
+	def get_context_data(self, **kwargs):
+		context = super(PortfolioView, self).get_context_data(**kwargs)
+		stock = Stock.objects.filter(ticker="TWITTER")
+		if stock.exists():
+			context['stock'] = stock
+		else:
+			context['stocks'] = None
+		return context
+
+	def post(self, request, *args, **kwargs):
+		stock = Stock.objects.filter(ticker="TWITTER")
+		user = UserBalance.objects.get(email=self.request.session['member_email'])
+		if request.POST['update'] == "buy":
+			user.balance -= float(request.POST['count']*price)
+			user.save()
+			context = self.get_context_data(**kwargs)
+			context['message'] = "Stocks have been bought"
+		else:
+			user.balance += float(request.POST['count']*price)
+			user.profit += (float(request.POST['count']*price)-old_price)
+			user.save()
+			context = self.get_context_data(**kwargs)
+			context['message'] = "Stocks have been sold"
+		return render(request, self.template_name, context)			
+			
+
+class StocksView(generic.TemplateView):
+	template_name = 'TradeNet/stocks.html'
+	
+	def get_context_data(self, **kwargs):
+		context = super(StocksView, self).get_context_data(**kwargs)
+		return context
+
+	def post(self, request, *args, **kwargs):
+		context = self.get_context_data(**kwargs)
+		results=trade.search(request.POST['term'])
+		if results:
+			context['search_results'] = results
+			if 'symbol' in results['securities']['security']:
+				context['size'] = 1
+			else:
+				context['size'] = len(results['securities']['security'])
+		else:
+			context['message'] = "Search failed"
+		return render(request, self.template_name, context)			
+				
+class DetailsView(generic.TemplateView):
+	template_name = 'TradeNet/details.html'
+	
+	def get_context_data(self, **kwargs):
+		context = super(DetailsView, self).get_context_data(**kwargs)
+		results=trade.getQuote(kwargs['symbol'])
+		if results:
+			context['quote_results'] = results
+			context['size'] = len(results['quotes'])
+			
+		else:
+			context['message'] = "Stock not found"
+		return context
+
 def logout(request):
 	del request.session['member_name']
 	del request.session['member_email']
