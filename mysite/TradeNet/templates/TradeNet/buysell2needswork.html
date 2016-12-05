@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1504.6">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 14.0px; font: 12.0px Times; color: #000000; -webkit-text-stroke: #000000}
+    p.p2 {margin: 0.0px 0.0px 12.0px 0.0px; line-height: 14.0px; font: 12.0px Times; color: #000000; -webkit-text-stroke: #000000}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 14.0px; font: 12.0px Times; color: #000000; -webkit-text-stroke: #000000; min-height: 14.0px}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 14.0px; font: 12.0px Times; color: #0000ee; -webkit-text-stroke: #0000ee}
+    span.s1 {font-kerning: none}
+    span.s2 {text-decoration: underline ; font-kerning: none; color: #0000ee; -webkit-text-stroke: 0px #0000ee}
+    span.s3 {text-decoration: underline ; font-kerning: none}
+    span.s4 {font-kerning: none; color: #000000; -webkit-text-stroke: 0px #000000}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1">{% load static %} {% if 'member_name' not in request.session %}</span></p>
+<p class="p2"><span class="s1">You are not logged in. Go to the home page to login</span></p>
+<a href = "{url 'TradeNet:index' %}">Home Page</a>
+<p class="p1"><span class="s2"><a href="file:///Users/Kelah/Documents/Python/SWArchitecture_Milestone2-master/mysite/TradeNet/templates/TradeNet/%7B%25%20url%20'TradeNet:index'%20%25%7D">Home page</a></span><span class="s1"> {% else %} {%if message %}</span></p>
+<p class="p2"><span class="s1">{{message}}</span></p>
+<p class="p3"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">{% endif %}</span></p>
+<p class="p2"><span class="s1">{{request.session.member_name}}'s Portfolio</span></p>
+<p class="p4"><span class="s3"><a href="file:///Users/Kelah/Documents/Python/SWArchitecture_Milestone2-master/mysite/TradeNet/templates/TradeNet/%7B%25%20url%20'TradeNet:index'%20%25%7D">Home page</a></span><span class="s4"> <a href="file:///Users/Kelah/Documents/Python/SWArchitecture_Milestone2-master/mysite/TradeNet/templates/TradeNet/%7B%25%20url%20'TradeNet:portfolio'%20%25%7D"><span class="s2">Portfolio</span></a> </span><span class="s3">log out</span><span class="s4"><span class="Apple-converted-space"> </span></span></p>
+<p class="p3"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1">Transactions:</span></p>
+<p class="p1"><span class="s1">{%if buy %}</span></p>
+<p class="p2"><span class="s1">Enter how many {{stock.company}} stocks you want to buy:</span></p>
+<form action="{% url 'TradeNet:portfolio' %}" method="post"
+>
+  {% csrf_token %}
+  <input type = "text" name="stockpurchase">
+  <input type = 'hidden' value = 'add' name = 'update'>
+  <br>
+  <input type="submit" value="Add" />
+</form>
+<p class="p1"><span class="s1">{% csrf_token %}<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1">{%else%}</span></p>
+<p class="p2"><span class="s1">You have {{count}} shares of {{stock.company}} stock</span></p>
+<p class="p2"><span class="s1">Enter how many {{stock.company}} stocks you want to sell:</span></p>
+<p class="p1"><span class="s1">{% csrf_token %}<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1">{% endif %}<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s2"><a href="file:///Users/Kelah/Documents/Python/SWArchitecture_Milestone2-master/mysite/TradeNet/templates/TradeNet/%7B%25%20url%20'TradeNet:portfolio'%20%25%7D">Portfolio</a></span><span class="s1"> {% endif %}<span class="Apple-converted-space"> </span></span></p>
+</body>
+</html>
