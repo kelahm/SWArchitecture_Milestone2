@@ -8,7 +8,7 @@
 
 <body>
 {% if 'member_name' not in request.session %}
-	<p>You are not loged in. Go to the home page to login</p>
+	<p>You are not logged in. Go to the home page to login</p>
 	<a href="{% url 'TradeNet:index' %}">Home page</a>
 {% else %}
 	<p>{{request.session.member_name}}'s Portfolio</p>
