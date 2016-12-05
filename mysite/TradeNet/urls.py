@@ -14,4 +14,4 @@ urlpatterns = [
 	url(r'^createuser', views.CreateUserView.as_view(), name='create_user'),
 	url(r'^logout', views.logout, name='logout'),
 	url(r'^tokensignin', views.tokensignin, name='tokensignin'),
-]
+	url(r'^buysell', views.BuySellView.as_view(), name='buysell'),]
