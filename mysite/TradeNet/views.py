@@ -148,9 +148,42 @@ class BuySellView(generic.TemplateView):
 			user.save()
 			context = self.get_context_data(**kwargs)
 			context['message'] = "Stocks have been sold"
-		return render(request, self.template_name, context)			
-			
+		return render(request, self.template_name, context)
+#Lots of edits, but it is still not working. See html document for buysell also. 
+class BuySellView(generic.TemplateView):
+	#NEEDS WORK!!!!
+	template_name = 'TradeNet/buysell.html'
+	stockInfo = Stock()
+	
+	def get_context_data(self, **kwargs):
+		context = super(BuySellView, self).get_context_data(**kwargs)
+		stock = Stock.objects.filter(ticker="TWITTER")
+		if stock.exists():
+			context['stock'] = stock
+		else:
+			context['stocks'] = None
+		return context
 
+	def post(self, request, *args, **kwargs):
+		stock = Stock.objects.filter(ticker="TWITTER")
+		user = UserBalance.objects.get(email=self.request.session['member_email'])
+		if request.POST['update'] == "buy":
+                        if user.balance < float(request.POST['count']*stockInfo.lastPrice):
+                                return "Insufficient Funds"
+                        else:
+                                user.balance -= float(request.POST['count']*stockInfo.lastPrice)
+                                user.save()
+                                context = self.get_context_data(**kwargs)
+                                context['message'] = "Stocks have been bought"
+		else:
+			user.balance += float(request.POST['count']*stockInfo.lastPrice)
+			#user.profit += (float(request.POST['count']*price)-stock.lastPrice)
+			user.save()
+			context = super(BuySellView,self).get_context_data(**kwargs)
+			context['message'] = "Stocks have been sold"
+		return render(request, self.template_name, context)	
+			
+#############################
 class StocksView(generic.TemplateView):
 	template_name = 'TradeNet/stocks.html'
 	
