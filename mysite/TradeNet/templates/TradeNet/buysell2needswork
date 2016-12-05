@@ -1,0 +1,28 @@
+{% load static %}
+<head>
+	<script src="jquery-3.1.1.min.js"></script>
+	<meta name="google-signin-client_id" content="427104067013-l2kc1tkhgmc8ghtgmkkvf4494teqiq3q.apps.googleusercontent.com">
+	<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+	<script src="{% static 'TradeNet/OAuth.js' %}"></script>
+</head>
+
+<body>
+{% if 'member_name' not in request.session %}
+	<p>You are not logged in. Go to the home page to login</p>
+	<a href="{% url 'TradeNet:index' %}">Home page</a>
+{% else %}
+	<p>{{request.session.member_name}}'s Portfolio</p>
+	<a href="{% url 'TradeNet:index' %}">Home page</a>
+	<a href="#" onclick="signOut();">log out</a>
+	<br>
+	<br>
+	<p>Would you like to buy or sell a stock?</p>
+	<form action="http://127.0.0.1:8000/TradeNet/buysell" method="post">
+		{% csrf_token %}
+		<input type="radio" name="update" value = "buy"> Buy<br>
+		<input type="radio" name="update" value = "sell"> Sell<br>
+		<br>
+		<input type="submit" value="Submit" />
+	</form>
+{% endif %}
+</body>
