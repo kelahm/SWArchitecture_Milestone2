@@ -17,24 +17,22 @@
 	{% endif %}
 	<p>{{request.session.member_name}}'s Portfolio</p>
 	<a href="{% url 'TradeNet:index' %}">Home page</a>
+	<a href="{% url 'TradeNet:portfolio' %}">Portfolio</a>
 	<a href="#" onclick="signOut();">log out</a>
 	<br>
 	<br>
 	<p>Transactions:</p>
 	{%if transactions %}
 		{% for each in transactions %}
-			{%if each.buy %}
-				<p>BOUGHT: {{each.quantity}} shares of {{each.stock.company}} stock for ${{each.price}} each</p>
-				<br>
+			{%if each.transaction.buy %}
+				<p>BOUGHT: {{each.transaction.quantity}} share(s) of {{each.transaction.stock.company}} stock for ${{each.transaction.price}} each</p>
+				
 			{%else%}
-				<p>SOLD: {{each.quantity}} shares of {{each.stock.company}} stock for ${{each.price}} each</p>
-				<br>
+				<p>SOLD: {{each.transaction.quantity}} share(s) of {{each.transaction.stock.company}} stock for ${{each.transaction.price}} each</p>
 			{% endif %}
 		{% endfor %}
 	{%else%}
 		<p>You have not traded any stocks</p>
 	{% endif %}
-	<br>
-	<a href="{% url 'TradeNet:portfolio' %}">Portfolio</a>
 {% endif %}
 </body>

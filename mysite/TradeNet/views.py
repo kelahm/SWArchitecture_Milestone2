@@ -4,12 +4,13 @@ from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from django.contrib.auth.models import User
-from TradeNet.models import History, UserBalance, Stock, Company, Transaction, OwnedStock
+from TradeNet.models import History, UserBalance, Stock, Transaction, OwnedStock
 from ReCaptcha import *
 from mailboxLayer import *
 from newsAPI import *
 from TradierAPI import *
 from oauth2client import client, crypt
+from datetime import datetime
 
 reCaptcha = ReCaptcha()
 mailboxLayer = MailboxLayer()
@@ -142,27 +143,75 @@ class BuySellView(generic.TemplateView):
 			else:
 				context['count'] = 0
 		return context
-	#NEEDS WORK!!!!
+
 	def post(self, request, *args, **kwargs):
+		context = self.get_context_data(**kwargs)
 		results=trade.getQuote(kwargs['symbol'])
 		s_user = UserBalance.objects.get(email=self.request.session['member_email'])
+		total = float(request.POST['count']) * float(results['quotes']['quote']['last'])
 		if request.POST['update'] == "buy":
-			owned_stock = OwnedStock.objects.filter(user__email=self.request.session['member_email'])
-			if owned_stock.exists():
-				context['count'] = owned_stock[0].quantity
+			if s_user.balance > total:
+				search_stock = Stock.objects.filter(ticker=results['quotes']['quote']['symbol'])
+				if search_stock.exists():
+					s_stock = search_stock[0]
+					s_stock.lastPrice=float(results['quotes']['quote']['last'])
+					s_stock.dailyNetChange=float(results['quotes']['quote']['change'])
+				else:
+					s_stock = Stock(company=results['quotes']['quote']['description'],ticker=results['quotes']['quote']['symbol'],lastPrice=float(results['quotes']['quote']['last']),exchange=results['quotes']['quote']['exch'],dailyNetChange=float(results['quotes']['quote']['change']))
+				
+				s_stock.save()
+				s_transaction = Transaction(stock=s_stock,price=float(results['quotes']['quote']['last']),time=datetime.utcnow(),quantity=int(request.POST['count']),buy=True)
+				s_transaction.save()
+				owned_stock = OwnedStock.objects.filter(user__email=self.request.session['member_email'],stock=s_stock)
+				if owned_stock.exists():
+					s_owned_stock = owned_stock[0]
+					s_owned_stock.quantity += int(request.POST['count'])
+					s_owned_stock.save()
+				else:
+					s_owned_stock = OwnedStock(user=s_user,stock=s_stock,quantity=int(request.POST['count']),transaction=s_transaction)
+					s_owned_stock.save()
+				
+				s_user.balance -= total
+				s_user.save()
+				history = History(user=s_user,transaction=s_transaction)
+				history.save()
+				context['message'] = "Stocks have been bought"
 			else:
-				context['count'] = 0
-				bought_stocks = OwnedStock(s_user=user, )
-			user.balance -= float(request.POST['count']*price)
-			user.save()
-			context = self.get_context_data(**kwargs)
-			context['message'] = "Stocks have been bought"
+				context['message'] = "You do not have enough money in your account to pay for the stocks"
+			
 		else:
-			user.balance += float(request.POST['count']*price)
-			user.profit += (float(request.POST['count']*price)-old_price)
-			user.save()
-			context = self.get_context_data(**kwargs)
-			context['message'] = "Stocks have been sold"
+			search_stock = Stock.objects.filter(ticker=results['quotes']['quote']['symbol'])
+			if not search_stock.exists():
+				context['message'] = "You do not own this stock"
+				return render(request, self.template_name, context)
+			s_stock = search_stock[0]
+			s_owned_stock = OwnedStock.objects.filter(user__email=self.request.session['member_email'], stock=s_stock)
+			if not s_owned_stock.exists():
+				context['message'] = "You do not own this stock"
+				return render(request, self.template_name, context)
+			owned_stock = s_owned_stock[0]
+			if owned_stock.quantity >= int(request.POST['count']):
+				s_stock.lastPrice=float(results['quotes']['quote']['last'])
+				s_stock.dailyNetChange=results['quotes']['quote']['change']
+				s_stock.save()
+				s_transaction = Transaction(stock=s_stock,price=float(results['quotes']['quote']['last']),time=datetime.utcnow(),quantity=int(request.POST['count']),buy=False)
+				s_transaction.save()
+				
+				owned_stock.quantity -= int(request.POST['count'])
+				if owned_stock.quantity == 0:
+					owned_stock.delete()
+				else:
+					owned_stock.save()
+					
+				difference = float(results['quotes']['quote']['last']) - owned_stock.transaction.price
+				s_user.profit += (difference*float(request.POST['count']))
+				s_user.balance += total
+				s_user.save()
+				history = History(user=s_user,transaction=s_transaction)
+				history.save()
+				context['message'] = "Stocks have been sold"
+			else:
+				context['message'] = "You do not have that many stocks to sell"
 		return render(request, self.template_name, context)
 
 class StocksView(generic.TemplateView):

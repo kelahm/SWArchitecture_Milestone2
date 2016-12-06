@@ -34,7 +34,7 @@
 	{%else%}
 		<p>You have {{count}} shares of {{stock.ticker}} stock</p>
 		<p>Enter how many {{symbol}} stocks you want to sell:</p>
-		<form action="{% url 'TradeNet:buy_sell' symbol 'buy' %}" method="post">
+		<form action="{% url 'TradeNet:buy_sell' symbol 'sell' %}" method="post">
 			{% csrf_token %}
 			<input type="number" min="1" name="count">
 			<input type='hidden' value='sell' name='update'>

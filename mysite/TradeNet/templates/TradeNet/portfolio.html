@@ -30,7 +30,7 @@
 	{%if stocks %}
 		{% for each in stocks %}
 			<p>{{each.quantity}} of {{each.stock.company}} stock bought at ${{each.transaction.price}} each  </p>
-			<a href="{% url 'TradeNet:index' %}">Sell</a>
+			<a href="{% url 'TradeNet:buy_sell' each.stock.ticker 'sell' %}">Sell</a>
 			<br>
 		{% endfor %}
 	{%else%}

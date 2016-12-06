@@ -11,17 +11,12 @@ class User (models.Model):
     portfolio = Portfolio() #Portfolio object to manage transactions and owned stock
 '''
 
-class Company(models.Model):
-    name = models.CharField(max_length=200)
-    finGrade = models.CharField(max_length=10)
-    currentRev = models.FloatField(default=0)
-    profit = models.FloatField(default=0)
 
 class Stock(models.Model):
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    company = models.CharField(max_length=200)
     ticker = models.CharField(max_length=5)
     lastPrice = models.FloatField(default=0)
-    exchange = models.FloatField(default=0)
+    exchange = models.CharField(max_length=200, default=5)
     dailyNetChange = models.FloatField(default=0)
 
 class Transaction(models.Model):
