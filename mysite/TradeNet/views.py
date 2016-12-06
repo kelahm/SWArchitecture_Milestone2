@@ -122,22 +122,37 @@ class TransactionHistoryView(generic.TemplateView):
 		return context
 			
 class BuySellView(generic.TemplateView):
-	#NEEDS WORK!!!!
 	template_name = 'TradeNet/buysell.html'
 	
 	def get_context_data(self, **kwargs):
-		context = super(PortfolioView, self).get_context_data(**kwargs)
-		stock = Stock.objects.filter(ticker="TWITTER")
-		if stock.exists():
-			context['stock'] = stock
+		context = super(BuySellView, self).get_context_data(**kwargs)
+		context['symbol'] = kwargs['symbol']
+		context['action'] = kwargs['action']
+		results=trade.getQuote(kwargs['symbol'])
+		if results:
+			context['quote_results'] = results
+			context['size'] = len(results['quotes'])
 		else:
-			context['stocks'] = None
+			context['message'] = "Stock not found"
+			
+		if kwargs['action'] == 'sell':
+			owned_stock = OwnedStock.objects.filter(user__email=self.request.session['member_email'])
+			if owned_stock.exists():
+				context['count'] = owned_stock[0].quantity
+			else:
+				context['count'] = 0
 		return context
-
+	#NEEDS WORK!!!!
 	def post(self, request, *args, **kwargs):
-		stock = Stock.objects.filter(ticker="TWITTER")
-		user = UserBalance.objects.get(email=self.request.session['member_email'])
+		results=trade.getQuote(kwargs['symbol'])
+		s_user = UserBalance.objects.get(email=self.request.session['member_email'])
 		if request.POST['update'] == "buy":
+			owned_stock = OwnedStock.objects.filter(user__email=self.request.session['member_email'])
+			if owned_stock.exists():
+				context['count'] = owned_stock[0].quantity
+			else:
+				context['count'] = 0
+				bought_stocks = OwnedStock(s_user=user, )
 			user.balance -= float(request.POST['count']*price)
 			user.save()
 			context = self.get_context_data(**kwargs)
@@ -149,41 +164,7 @@ class BuySellView(generic.TemplateView):
 			context = self.get_context_data(**kwargs)
 			context['message'] = "Stocks have been sold"
 		return render(request, self.template_name, context)
-#Lots of edits, but it is still not working. See html document for buysell also. 
-class BuySellView(generic.TemplateView):
-	#NEEDS WORK!!!!
-	template_name = 'TradeNet/buysell.html'
-	stockInfo = Stock()
-	
-	def get_context_data(self, **kwargs):
-		context = super(BuySellView, self).get_context_data(**kwargs)
-		stock = Stock.objects.filter(ticker="TWITTER")
-		if stock.exists():
-			context['stock'] = stock
-		else:
-			context['stocks'] = None
-		return context
 
-	def post(self, request, *args, **kwargs):
-		stock = Stock.objects.filter(ticker="TWITTER")
-		user = UserBalance.objects.get(email=self.request.session['member_email'])
-		if request.POST['update'] == "buy":
-                        if user.balance < float(request.POST['count']*stockInfo.lastPrice):
-                                return "Insufficient Funds"
-                        else:
-                                user.balance -= float(request.POST['count']*stockInfo.lastPrice)
-                                user.save()
-                                context = self.get_context_data(**kwargs)
-                                context['message'] = "Stocks have been bought"
-		else:
-			user.balance += float(request.POST['count']*stockInfo.lastPrice)
-			#user.profit += (float(request.POST['count']*price)-stock.lastPrice)
-			user.save()
-			context = super(BuySellView,self).get_context_data(**kwargs)
-			context['message'] = "Stocks have been sold"
-		return render(request, self.template_name, context)	
-			
-#############################
 class StocksView(generic.TemplateView):
 	template_name = 'TradeNet/stocks.html'
 	
@@ -213,7 +194,6 @@ class DetailsView(generic.TemplateView):
 		if results:
 			context['quote_results'] = results
 			context['size'] = len(results['quotes'])
-			
 		else:
 			context['message'] = "Stock not found"
 		return context

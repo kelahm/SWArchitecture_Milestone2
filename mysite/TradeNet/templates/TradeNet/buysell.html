@@ -15,16 +15,16 @@
 		<p>{{message}}</p>
 		<br>
 	{% endif %}
-	<p>{{request.session.member_name}}'s Portfolio</p>
+	<p>buy/sell</p>
 	<a href="{% url 'TradeNet:index' %}">Home page</a>
 	<a href="{% url 'TradeNet:portfolio' %}">Portfolio</a>
 	<a href="#" onclick="signOut();">log out</a>
 	<br>
 	<br>
-	<p>Transactions:</p>
-	{%if buy %}
-		<p>Enter how many {{stock.company}} stocks you want to buy:</p>
-		<form action="{% url 'TradeNet:buy_sell' %}" method="post">
+	<p>The current price for this stock is ${{quote_results.quotes.quote.last}}</p>
+	{%if action == "buy" %}
+		<p>Enter how many {{symbol}} stocks you want to buy:</p>
+		<form action="{% url 'TradeNet:buy_sell' symbol 'buy' %}" method="post">
 			{% csrf_token %}
 			<input type="number" min="1" name="count">
 			<input type='hidden' value='buy' name='update'>
@@ -32,9 +32,9 @@
 			<input type="submit" value="Buy" />
 		</form>
 	{%else%}
-		<p>You have {{count}} shares of {{stock.company}} stock</p>
-		<p>Enter how many {{stock.company}} stocks you want to sell:</p>
-		<form action="{% url 'TradeNet:buy_sell' %}" method="post">
+		<p>You have {{count}} shares of {{stock.ticker}} stock</p>
+		<p>Enter how many {{symbol}} stocks you want to sell:</p>
+		<form action="{% url 'TradeNet:buy_sell' symbol 'buy' %}" method="post">
 			{% csrf_token %}
 			<input type="number" min="1" name="count">
 			<input type='hidden' value='sell' name='update'>
@@ -42,7 +42,5 @@
 			<input type="submit" value="Sell" />
 		</form>
 	{% endif %}
-	<br>
-	<a href="{% url 'TradeNet:portfolio' %}">Portfolio</a>
 {% endif %}
 </body>

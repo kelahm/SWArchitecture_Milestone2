@@ -24,6 +24,8 @@
 	<br>
 	<p>{{quote_results.quotes.quote.symbol}} stock page</p>
 	<br>
+	<a href="{% url 'TradeNet:buy_sell' quote_results.quotes.quote.symbol 'buy' %}">Buy Shares</a>
+	<br>
 	<p>{{quote_results.quotes.quote.description}}</p>
 	<br>
 	<p>stock price: ${{quote_results.quotes.quote.last}}</p>
