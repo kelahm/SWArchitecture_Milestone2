@@ -11,6 +11,7 @@ from newsAPI import *
 from TradierAPI import *
 from oauth2client import client, crypt
 from datetime import datetime
+from twitter import *
 
 reCaptcha = ReCaptcha()
 mailboxLayer = MailboxLayer()
@@ -18,6 +19,7 @@ news = NewsApi()
 trade = TradierAPI()
 CLIENT_ID = '427104067013-l2kc1tkhgmc8ghtgmkkvf4494teqiq3q.apps.googleusercontent.com'
 APPS_DOMAIN_NAME = 'http://localhost:8000/TradeNet/'
+tweets = Twitter()
 
 class IndexView(generic.TemplateView):
 	template_name = 'TradeNet/index.html'
@@ -245,6 +247,13 @@ class DetailsView(generic.TemplateView):
 			context['size'] = len(results['quotes'])
 		else:
 			context['message'] = "Stock not found"
+			
+		result=tweets.search(kwargs['symbol'])
+		if result:
+			context['tweet_results'] = result
+		else:
+			context['message'] = "Tweets not found"
+
 		return context
 
 def logout(request):
