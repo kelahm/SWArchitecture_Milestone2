@@ -39,5 +39,17 @@
 	<p>52 week high: ${{quote_results.quotes.quote.week_52_high}}</p>
 	<br>
 	<p>52 week low: ${{quote_results.quotes.quote.week_52_low}}</p>
+	<br>
+	<br>
+	<p> Tweets from {{quote_results.quotes.quote.symbol}}</p>
+	<ul>
+		{% for obj in tweet_results %}
+    		<li>Description: {{ obj.text }}</li>
+    		<li>Retweet Count: {{ obj.retweet_count }}</li>
+    		<li>Favorite Count: {{ obj.favorite_count }}</li>
+    		<li>Created at: {{ obj.created_at }}</li>
+    		<br>
+		{% endfor %}
+</ul>
 {% endif %}
 </body>
