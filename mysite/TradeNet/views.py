@@ -248,7 +248,7 @@ class DetailsView(generic.TemplateView):
 		else:
 			context['message'] = "Stock not found"
 			
-		result=tweets.search(kwargs['symbol'])
+		result=tweets.search("$" + kwargs['symbol'])
 		if result:
 			context['tweet_results'] = result
 		else:
@@ -277,6 +277,9 @@ def tokensignin(request):
 		new_user.last_name = idinfo['family_name']
 		new_user.first_name = idinfo['given_name']
 		new_user.save()
+		user_balance = UserBalance(email=idinfo['email'])
+		user_balance.save()
 	request.session['member_name'] = idinfo['given_name']
+	request.session['member_email'] = idinfo['email']
 	request.session['google_account'] = True
 	return HttpResponse("ok")
