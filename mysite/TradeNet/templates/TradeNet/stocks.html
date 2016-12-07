@@ -18,15 +18,14 @@
 	<a href="#" onclick="signOut();">log out</a>
 	<br>
 	<br>
+	<p>Search for company stocks:</p>
+	<form action="{% url 'TradeNet:stocks' %}" method="post">
+		{% csrf_token %}
+		<input type="text" name="term">
+		<br>
+		<input type="submit" value="Search" />
+	</form>
 	{% if search_results %}
-		<p>Search for stocks:</p>
-		<form action="{% url 'TradeNet:stocks' %}" method="post">
-			{% csrf_token %}
-			<input type="text" name="term">
-			<br>
-			<input type="submit" value="Search" />
-		</form>
-		
 		<p>Search results:</p>
 		{% if search_results.securities == None %}
 			<p>No stocks were found</p>
@@ -39,14 +38,6 @@
 				<br>
 			{% endfor %}
 		{% endif %}
-	{%else%}
-		<p>Search for stocks:</p>
-		<form action="{% url 'TradeNet:stocks' %}" method="post">
-			{% csrf_token %}
-			<input type="text" name="term">
-			<br>
-			<input type="submit" value="Search" />
-		</form>
 	{% endif %}
 	{%if message %}
 		<p>{{message}}</p>
