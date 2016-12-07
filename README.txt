@@ -1,8 +1,8 @@
-This is a repo for the Trade Net assignment in Software Arch
+#This is a repo for the Trade Net assignment in Software Arch
 
-Check the wiki to find out how to run the website on your local machine.
+###Check the wiki to find out how to run the website on your local machine.
 
-Notes:
+#Notes:
 On the search page search for company names not the ticker.
 
 In the step: Sell 100 shares of Twitter (TWTR) - Rejected because Customer #1 doesn't own shares in TWTR
