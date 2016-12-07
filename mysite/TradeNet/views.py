@@ -226,14 +226,14 @@ class StocksView(generic.TemplateView):
 	def post(self, request, *args, **kwargs):
 		context = self.get_context_data(**kwargs)
 		results=trade.search(request.POST['term'])
-		if results:
+		if results['securities']:
 			context['search_results'] = results
 			if 'symbol' in results['securities']['security']:
 				context['size'] = 1
 			else:
 				context['size'] = len(results['securities']['security'])
 		else:
-			context['message'] = "Search failed"
+			context['message'] = "Search found no stocks"
 		return render(request, self.template_name, context)			
 				
 class DetailsView(generic.TemplateView):

@@ -1,6 +1,6 @@
 {% load static %}
 <head>
-	<script src="jquery-3.1.1.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<meta name="google-signin-client_id" content="427104067013-l2kc1tkhgmc8ghtgmkkvf4494teqiq3q.apps.googleusercontent.com">
 	<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
 	<script src="{% static 'TradeNet/OAuth.js' %}"></script>
@@ -11,10 +11,6 @@
 	<p>You are not logged in. Go to the home page to login</p>
 	<a href="{% url 'TradeNet:index' %}">Home page</a>
 {% else %}
-	{%if message %}
-		<p>{{message}}</p>
-		<br>
-	{% endif %}
 	<p>{{request.session.member_name}} is logged in</p>
 	<a href="{% url 'TradeNet:index' %}">Home page</a>
 	<a href="{% url 'TradeNet:portfolio' %}">Portfolio</a>
@@ -51,6 +47,10 @@
 			<br>
 			<input type="submit" value="Search" />
 		</form>
+	{% endif %}
+	{%if message %}
+		<p>{{message}}</p>
+		<br>
 	{% endif %}
 {% endif %}
 </body>
