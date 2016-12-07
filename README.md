@@ -9,4 +9,4 @@
 in order to get to the sell stock page you have to know the link if you do not own the stock. if you own the stock the sell link should be in your portfolio.
 
 3. In the step, "Buy 1000 shares of Google (GOOG) - Rejected because of insufficient cash - can only use cash available to purchase shares".
-The Tradier API for some reason will not return Google stock when the search function is used.
+The Tradier API for some reason will not return Google stock when the search function is used. you can view the Google stock page at this [link](http://localhost:8000/TradeNet/details/GOOG) if needed.
